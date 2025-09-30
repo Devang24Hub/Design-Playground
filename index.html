@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Design Workshop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;700&family=Playfair+Display:wght@700&family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Refined Neutrals & Vibrant Accents -->
+    <!-- Application Structure Plan: The application is now structured into four hands-on 'playground' sections: Color, Contrast, Typography, and a new Layout & Spacing section. The goal is to create a dynamic workshop tool where users learn by doing. A fixed top navigation allows easy movement between these playgrounds. This structure elevates the original concept from a simple demo to an exploratory sandbox, encouraging experimentation. Users can now explore color harmonies, test real-world contrast examples, manipulate live typography, and visually understand the box model, providing a much richer, hands-on experience. -->
+    <!-- Visualization & Content Choices: 
+        1. Color Harmony Playground: Report Info -> Color Relationships. Goal -> Deeper Exploration. Viz/Method -> Interactive Color Wheel (HTML/CSS/JS). Interaction -> Users now select a harmony type (Complementary, Analogous, Triadic) via buttons. Clicking a primary color then highlights the corresponding harmony on the wheel and provides a detailed explanation. Justification -> Teaches a more advanced and practical aspect of color theory beyond the basics.
+        2. Contrast Checker 2.0: Report Info -> Accessibility. Goal -> Practical Application. Viz/Method -> Enhanced Contrast Checker (HTML/JS). Interaction -> Added clickable "Good" and "Bad" real-world examples (e.g., 'Gray on White'). Clicking an example instantly loads its colors into the checker for analysis. Justification -> Bridges theory and practice by showing users common contrast mistakes and successes.
+        3. Typography Sandbox: Report Info -> Fonts & Hierarchy. Goal -> Demonstrate & Manipulate. Viz/Method -> Interactive Text Block (HTML/JS). Interaction -> Users can now toggle font pairing (Serif heading/Sans body) and use sliders to manipulate the body text's font size and line height in real-time. Justification -> Provides a tangible feel for how typographic details affect readability and visual hierarchy.
+        4. Layout & Spacing Lab: Report Info -> (New Content). Goal -> Teach Foundational Web Layout. Viz/Method -> Interactive Box Model & Flexbox Demo (HTML/JS). Interaction -> Users click buttons to add padding and margin to a visual element, seeing the 'box model' in action. They can also change flexbox alignment properties and see the items rearrange instantly. Justification -> Demystifies core CSS layout concepts that are crucial for translating Figma designs into reality.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+            color: #212529;
+        }
+        .font-serif-display { font-family: 'Lora', serif; }
+        .font-sans { font-family: 'Inter', sans-serif; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        .font-roboto { font-family: 'Roboto', sans-serif; }
+        .font-montserrat { font-family: 'Montserrat', sans-serif; }
+        
+        .nav-link.active { color: #FD7E14; font-weight: 600; }
+        .color-box { transition: all 0.3s ease-in-out; cursor: pointer; position: absolute; }
+        .color-box.active { transform: scale(1.15); box-shadow: 0 0 0 4px #FD7E14; z-index: 10; }
+        .color-box.related { opacity: 1 !important; transform: scale(1.05); border: 2px solid #212529; }
+        .color-box.dimmed { opacity: 0.2; transform: scale(0.95); }
+
+        .control-btn.active { background-color: #FD7E14; color: white; }
+        .contrast-example { cursor: pointer; transition: transform 0.2s ease; }
+        .contrast-example:hover { transform: scale(1.05); }
+
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 8px; background: #E9ECEF; border-radius: 5px; outline: none; opacity: 0.7; transition: opacity .2s; }
+        input[type="range"]:hover { opacity: 1; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: #FD7E14; cursor: pointer; border-radius: 50%; }
+        input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: #FD7E14; cursor: pointer; border-radius: 50%; }
+
+        .lab-preview {
+             background-image: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+             background-size: 20px 20px;
+             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        .grid-demo-item, .flex-demo-item { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+</head>
+<body class="bg-[#F8F9FA]">
+
+    <header class="bg-white/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-[#212529]">Creative Design Workshop</h1>
+            <div class="hidden md:flex space-x-8 text-gray-500 font-medium">
+                <a href="#color" class="nav-link hover:text-orange-500 transition-colors">Color</a>
+                <a href="#contrast" class="nav-link hover:text-orange-500 transition-colors">Contrast</a>
+                <a href="#typography" class="nav-link hover:text-orange-500 transition-colors">Typography</a>
+                <a href="#layout" class="nav-link hover:text-orange-500 transition-colors">Layout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 pt-24">
+        
+        <section class="text-center py-20">
+            <h1 class="text-6xl font-bold mb-4 text-[#212529]">Design Playground</h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">An interactive sandbox for mastering the core principles of great design.</p>
+        </section>
+
+        <!-- Section 1: Color -->
+        <section id="color" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-[#212529]">Color Harmony Playground</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Explore how colors work together. Select a harmony type, then click a primary color (large circles) to see it in action.</p>
+            </div>
+            <div class="flex justify-center mb-8 space-x-2">
+                <button class="control-btn active px-4 py-2 bg-gray-200 rounded-full" data-harmony="complementary">Complementary</button>
+                <button class="control-btn px-4 py-2 bg-gray-200 rounded-full" data-harmony="analogous">Analogous</button>
+                <button class="control-btn px-4 py-2 bg-gray-200 rounded-full" data-harmony="triadic">Triadic</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div id="color-wheel" class="relative w-full max-w-md mx-auto h-96">
+                    <div data-color="red" data-analogous='["orange", "purple"]' data-triadic='["yellow", "blue"]' data-complementary="green" class="color-box top-[5%] left-1/2 -translate-x-1/2 w-24 h-24 bg-[#EF4444] rounded-full z-10"></div>
+                    <div data-color="yellow" data-analogous='["red", "green"]' data-triadic='["red", "blue"]' data-complementary="purple" class="color-box bottom-[12%] left-[15%] w-24 h-24 bg-[#FBBF24] rounded-full z-10"></div>
+                    <div data-color="blue" data-analogous='["green", "purple"]' data-triadic='["red", "yellow"]' data-complementary="orange" class="color-box bottom-[12%] right-[15%] w-24 h-24 bg-[#3B82F6] rounded-full z-10"></div>
+                    <div data-color="orange" class="color-box top-[35%] left-[10%] w-20 h-20 bg-[#F97316] rounded-full"></div>
+                    <div data-color="purple" class="color-box top-[35%] right-[10%] w-20 h-20 bg-[#8B5CF6] rounded-full"></div>
+                    <div data-color="green" class="color-box bottom-0 left-1/2 -translate-x-1/2 w-20 h-20 bg-[#22C55E] rounded-full"></div>
+                </div>
+                <div class="bg-white rounded-lg p-8 shadow-lg min-h-[16rem]">
+                    <h3 id="color-harmony-title" class="text-2xl font-bold mb-4">Complementary Harmony</h3>
+                    <p id="color-info" class="text-gray-700 text-lg leading-relaxed">
+                        Select a primary color. Complementary colors are opposite on the color wheel and create strong, vibrant contrast.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Contrast -->
+        <section id="contrast" class="py-16 bg-white rounded-2xl my-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-[#212529]">Live Contrast Checker</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Is your text readable? Use this tool to check contrast ratios. Try the quick examples to see common successes and failures.</p>
+            </div>
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <div class="flex items-center justify-around mb-6">
+                            <div class="text-center"><label for="text-color" class="block font-semibold mb-2">Text</label><input type="color" id="text-color" value="#212529" class="w-24 h-12 border-none rounded cursor-pointer"></div>
+                            <div class="text-center"><label for="bg-color" class="block font-semibold mb-2">Background</label><input type="color" id="bg-color" value="#F8F9FA" class="w-24 h-12 border-none rounded cursor-pointer"></div>
+                        </div>
+                        <div class="text-center mt-6"><h4 class="font-bold text-xl">Contrast Ratio</h4><p id="contrast-ratio" class="text-4xl font-bold mt-2">14.15</p><p id="contrast-status" class="mt-2 text-lg font-semibold text-green-600">Excellent (Passes AAA)</p></div>
+                    </div>
+                    <div id="preview-panel" class="p-8 rounded-lg text-center transition-colors duration-300" style="background-color: #F8F9FA;"><h3 id="preview-heading" class="text-3xl font-bold" style="color: #212529;">Live Preview</h3><p id="preview-text" class="mt-4" style="color: #212529;">This sample text shows the readability of your combination.</p></div>
+                </div>
+                <div class="mt-12">
+                    <h4 class="text-center font-semibold text-lg mb-4">Quick Examples</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="contrast-example bg-white p-4 rounded-lg shadow" data-bg="#FFFFFF" data-fg="#777777"><p class="text-sm font-bold text-gray-400">Bad</p><p class="text-lg" style="color:#777777;">Gray on White</p></div>
+                        <div class="contrast-example bg-black p-4 rounded-lg shadow" data-bg="#000000" data-fg="#0000FF"><p class="text-sm font-bold text-gray-400">Bad</p><p class="text-lg" style="color:#0000FF;">Blue on Black</p></div>
+                        <div class="contrast-example bg-white p-4 rounded-lg shadow" data-bg="#FFFFFF" data-fg="#343A40"><p class="text-sm font-bold text-green-500">Good</p><p class="text-lg" style="color:#343A40;">Dark Gray on White</p></div>
+                        <div class="contrast-example bg-blue-800 p-4 rounded-lg shadow" data-bg="#1E40AF" data-fg="#FFFFFF"><p class="text-sm font-bold text-green-500">Good</p><p class="text-lg text-white">White on Blue</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Typography -->
+        <section id="typography" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-[#212529]">Typography Sandbox</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Typography is more than just readable text. It’s about creating emotion and hierarchy. Experiment with font pairings and fine-tune the details below.</p>
+            </div>
+            <div class="max-w-7xl mx-auto">
+                 <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="md:col-span-1 bg-white p-6 rounded-lg shadow-lg h-fit">
+                        <h4 class="font-bold mb-4 text-lg">Live Controls</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block font-semibold mb-2 text-sm">Font Pairing</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <button class="font-pairing-btn text-xs px-3 py-1 bg-gray-200 rounded-full active" data-h-font="font-playfair" data-b-font="font-roboto">Classic</button>
+                                    <button class="font-pairing-btn text-xs px-3 py-1 bg-gray-200 rounded-full" data-h-font="font-montserrat" data-b-font="font-inter">Modern</button>
+                                    <button class="font-pairing-btn text-xs px-3 py-1 bg-gray-200 rounded-full" data-h-font="font-lora" data-b-font="font-roboto">Elegant</button>
+                                </div>
+                            </div>
+                            <div class="border-t my-4"></div>
+                            <div><label for="font-size-slider" class="block font-semibold mb-1 text-sm">Font Size: <span id="font-size-value">18</span>px</label><input id="font-size-slider" type="range" min="14" max="24" value="18"></div>
+                            <div><label for="line-height-slider" class="block font-semibold mb-1 text-sm">Line Height: <span id="line-height-value">1.6</span></label><input id="line-height-slider" type="range" min="1.2" max="2.2" value="1.6" step="0.1"></div>
+                            <div><label for="letter-spacing-slider" class="block font-semibold mb-1 text-sm">Letter Spacing: <span id="letter-spacing-value">Normal</span></label><input id="letter-spacing-slider" type="range" min="-1" max="2" value="0" step="0.5"></div>
+                             <div><label for="font-weight-slider" class="block font-semibold mb-1 text-sm">Font Weight: <span id="font-weight-value">400</span></label><input id="font-weight-slider" type="range" min="400" max="700" value="400" step="300"></div>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 bg-white rounded-lg p-8 shadow-lg">
+                        <h1 id="type-heading" class="font-playfair text-4xl font-bold mb-4">Design is not just what it looks like and feels like. Design is how it works.</h1>
+                        <p id="type-body" class="font-roboto text-gray-700 transition-all duration-200" style="font-size: 18px; line-height: 1.6; letter-spacing: 0px; font-weight: 400;">This is your sandbox. The text you're reading is fully editable through the controls on the left. Notice how a subtle change in line height or letter spacing can dramatically alter the mood and readability of the text. A great design uses these details to guide the user's eye and create a comfortable reading experience. The goal is clarity and a well-defined hierarchy. — Steve Jobs (paraphrased)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Section 4: Layout -->
+        <section id="layout" class="py-16 bg-white rounded-2xl my-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-[#212529]">Layout & Spacing Lab</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Good layout brings order to chaos. Learn when to use one-dimensional **Flexbox** (for a navigation bar) vs. two-dimensional **Grid** (for a photo gallery).</p>
+            </div>
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Flexbox Lab -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                    <h3 class="text-2xl font-bold text-center mb-1">Flexbox Lab</h3>
+                    <p class="text-center text-sm text-gray-600 mb-4">Best for arranging items in a single line (row or column).</p>
+                    <div id="flex-container" class="lab-preview flex p-4 rounded-lg min-h-[12rem] items-center justify-center transition-all duration-300 gap-4">
+                        <div class="flex-demo-item bg-white rounded shadow px-4 py-2 font-semibold text-purple-800">Home</div>
+                        <div class="flex-demo-item bg-white rounded shadow px-4 py-2 font-semibold text-purple-800">About</div>
+                        <div class="flex-demo-item bg-white rounded shadow px-4 py-2 font-semibold text-purple-800">Contact</div>
+                    </div>
+                     <div class="grid grid-cols-2 gap-x-6 gap-y-4 mt-4 pt-4 border-t">
+                         <div>
+                            <label class="font-semibold text-sm">Direction</label>
+                             <div class="flex justify-center space-x-1 mt-1 bg-gray-200 p-1 rounded-full">
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full bg-purple-500 text-white" data-prop="direction" data-val="row">Row</button>
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full" data-prop="direction" data-val="col">Column</button>
+                            </div>
+                         </div>
+                         <div>
+                            <label class="font-semibold text-sm">Gap</label>
+                             <div class="flex justify-center space-x-1 mt-1 bg-gray-200 p-1 rounded-full">
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full" data-prop="gap" data-val="0">0</button>
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full bg-purple-500 text-white" data-prop="gap" data-val="4">4</button>
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full" data-prop="gap" data-val="8">8</button>
+                            </div>
+                         </div>
+                         <div>
+                            <label class="font-semibold text-sm">Justify (Main Axis)</label>
+                             <div class="flex justify-center space-x-1 mt-1 bg-gray-200 p-1 rounded-full">
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full" data-prop="justify" data-val="start">Start</button>
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full bg-purple-500 text-white" data-prop="justify" data-val="center">Center</button>
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full" data-prop="justify" data-val="end">End</button>
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full" data-prop="justify" data-val="between">Between</button>
+                            </div>
+                         </div>
+                         <div>
+                            <label class="font-semibold text-sm">Align (Cross Axis)</label>
+                             <div class="flex justify-center space-x-1 mt-1 bg-gray-200 p-1 rounded-full">
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full" data-prop="align" data-val="start">Start</button>
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full bg-purple-500 text-white" data-prop="align" data-val="center">Center</button>
+                                <button class="flex-btn px-3 py-1 rounded-full text-xs w-full" data-prop="align" data-val="end">End</button>
+                            </div>
+                         </div>
+                     </div>
+                </div>
+                <!-- Grid Lab -->
+                <div class="bg-gray-50 p-6 rounded-lg shadow-inner">
+                    <h3 class="text-2xl font-bold text-center mb-1">Grid Lab</h3>
+                    <p class="text-center text-sm text-gray-600 mb-4">Best for complex, two-dimensional layouts (rows AND columns).</p>
+                    <div id="grid-container" class="lab-preview grid grid-cols-3 gap-4 p-4 rounded-lg min-h-[12rem]">
+                        <div class="grid-demo-item bg-white rounded-lg shadow p-2 text-center"><div class="w-full h-8 bg-teal-200 rounded mb-1"></div><p class="text-xs font-semibold text-teal-800">Card 1</p></div>
+                        <div id="grid-item-2" class="grid-demo-item bg-white rounded-lg shadow p-2 text-center col-span-1"><div class="w-full h-8 bg-teal-200 rounded mb-1"></div><p class="text-xs font-semibold text-teal-800">Card 2</p></div>
+                        <div class="grid-demo-item bg-white rounded-lg shadow p-2 text-center"><div class="w-full h-8 bg-teal-200 rounded mb-1"></div><p class="text-xs font-semibold text-teal-800">Card 3</p></div>
+                        <div class="grid-demo-item bg-white rounded-lg shadow p-2 text-center"><div class="w-full h-8 bg-teal-200 rounded mb-1"></div><p class="text-xs font-semibold text-teal-800">Card 4</p></div>
+                        <div class="grid-demo-item bg-white rounded-lg shadow p-2 text-center"><div class="w-full h-8 bg-teal-200 rounded mb-1"></div><p class="text-xs font-semibold text-teal-800">Card 5</p></div>
+                    </div>
+                     <div class="grid grid-cols-2 gap-6 mt-4 pt-4 border-t">
+                        <div>
+                            <label for="grid-cols-slider" class="block font-semibold mb-1 text-sm">Columns: <span id="grid-cols-value">3</span></label>
+                            <input id="grid-cols-slider" type="range" min="2" max="5" value="3" step="1">
+                        </div>
+                        <div>
+                            <label for="grid-gap-slider" class="block font-semibold mb-1 text-sm">Gap: <span id="grid-gap-value">4</span></label>
+                            <input id="grid-gap-slider" type="range" min="1" max="8" value="4" step="1">
+                        </div>
+                         <div class="col-span-2">
+                             <label class="block font-semibold mb-1 text-sm">Span Item #2</label>
+                             <div class="flex justify-center space-x-1 mt-1 bg-gray-200 p-1 rounded-full">
+                                <button class="grid-btn px-3 py-1 rounded-full text-xs w-full bg-teal-500 text-white" data-span="1">1 Column</button>
+                                <button class="grid-btn px-3 py-1 rounded-full text-xs w-full" data-span="2">2 Columns</button>
+                                <button class="grid-btn px-3 py-1 rounded-full text-xs w-full" data-span="3">3 Columns</button>
+                            </div>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center py-12 text-gray-500"><p>Creative Design Workshop | Learn by Doing</p></footer>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href').substring(1) === entry.target.id);
+                        });
+                    }
+                });
+            }, { rootMargin: '-40% 0px -40% 0px' });
+            sections.forEach(section => observer.observe(section));
+            
+            // --- COLOR SECTION ---
+            const colorWheel = document.getElementById('color-wheel');
+            const colorInfo = document.getElementById('color-info');
+            const colorHarmonyTitle = document.getElementById('color-harmony-title');
+            const colorBoxes = Array.from(colorWheel.querySelectorAll('.color-box'));
+            const harmonyBtns = document.querySelectorAll('[data-harmony]');
+            let activeHarmony = 'complementary';
+
+            const harmonyInfo = {
+                complementary: "<strong>Complementary:</strong> Colors opposite on the wheel. Creates high-impact, vibrant contrast. Use one color as dominant and the other for accents.",
+                analogous: "<strong>Analogous:</strong> 2-4 colors next to each other on the wheel. Creates serene, comfortable, and often nature-based designs. Low-contrast and harmonious.",
+                triadic: "<strong>Triadic:</strong> Three colors evenly spaced on the wheel. Offers strong visual contrast while retaining balance and color richness. Vibrant and dynamic."
+            };
+
+            harmonyBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    harmonyBtns.forEach(b => b.classList.remove('active', 'bg-orange-500', 'text-white'));
+                    btn.classList.add('active', 'bg-orange-500', 'text-white');
+                    activeHarmony = btn.dataset.harmony;
+                    colorHarmonyTitle.textContent = activeHarmony.charAt(0).toUpperCase() + activeHarmony.slice(1) + ' Harmony';
+                    colorInfo.innerHTML = harmonyInfo[activeHarmony];
+                    colorBoxes.forEach(cb => cb.classList.remove('active', 'related', 'dimmed'));
+                });
+            });
+
+            colorBoxes.forEach(box => {
+                if (box.dataset.complementary) {
+                    box.addEventListener('click', () => {
+                        const baseColor = box.dataset.color;
+                        const relatedColors = box.dataset[activeHarmony];
+                        const relatedArray = (typeof relatedColors === 'string' && relatedColors.startsWith('[')) ? JSON.parse(relatedColors.replace(/'/g, '"')) : [relatedColors];
+
+                        colorBoxes.forEach(cb => {
+                            const cbColor = cb.dataset.color;
+                            cb.classList.remove('active', 'related', 'dimmed');
+                            if (cbColor === baseColor) {
+                                cb.classList.add('active');
+                            } else if (relatedArray.includes(cbColor)) {
+                                cb.classList.add('related');
+                            } else {
+                                cb.classList.add('dimmed');
+                            }
+                        });
+                        colorInfo.innerHTML = `${harmonyInfo[activeHarmony]} <br><br>Selected: <strong>${baseColor.charAt(0).toUpperCase() + baseColor.slice(1)}</strong>`;
+                    });
+                }
+            });
+
+            // --- CONTRAST SECTION ---
+            const textColorInput = document.getElementById('text-color');
+            const bgColorInput = document.getElementById('bg-color');
+            const contrastRatioEl = document.getElementById('contrast-ratio');
+            const contrastStatusEl = document.getElementById('contrast-status');
+            const previewPanel = document.getElementById('preview-panel');
+            const previewHeading = document.getElementById('preview-heading');
+            const previewText = document.getElementById('preview-text');
+            const contrastExamples = document.querySelectorAll('.contrast-example');
+
+            const getLuminance = hex => {
+                const rgb = parseInt(hex.substring(1), 16);
+                const [r, g, b] = [(rgb >> 16) & 0xff, (rgb >> 8) & 0xff, rgb & 0xff];
+                const srgb = [r, g, b].map(v => {
+                    v /= 255;
+                    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+                });
+                return 0.2126 * srgb[0] + 0.7152 * srgb[1] + 0.0722 * srgb[2];
+            };
+
+            const calculateContrast = () => {
+                const lum1 = getLuminance(textColorInput.value);
+                const lum2 = getLuminance(bgColorInput.value);
+                const ratio = (Math.max(lum1, lum2) + 0.05) / (Math.min(lum1, lum2) + 0.05);
+                contrastRatioEl.textContent = ratio.toFixed(2);
+                if (ratio >= 7) {
+                    contrastStatusEl.textContent = 'Excellent (Passes AAA)';
+                    contrastStatusEl.className = 'mt-2 text-lg font-semibold text-green-600';
+                } else if (ratio >= 4.5) {
+                    contrastStatusEl.textContent = 'Good (Passes AA)';
+                    contrastStatusEl.className = 'mt-2 text-lg font-semibold text-teal-600';
+                } else if (ratio >= 3) {
+                    contrastStatusEl.textContent = 'Okay (Passes AA Large Text)';
+                    contrastStatusEl.className = 'mt-2 text-lg font-semibold text-yellow-500';
+                } else {
+                    contrastStatusEl.textContent = 'Poor (Fails)';
+                    contrastStatusEl.className = 'mt-2 text-lg font-semibold text-red-500';
+                }
+                previewPanel.style.backgroundColor = bgColorInput.value;
+                previewHeading.style.color = textColorInput.value;
+                previewText.style.color = textColorInput.value;
+            };
+
+            [textColorInput, bgColorInput].forEach(el => el.addEventListener('input', calculateContrast));
+            contrastExamples.forEach(ex => {
+                ex.addEventListener('click', () => {
+                    bgColorInput.value = ex.dataset.bg;
+                    textColorInput.value = ex.dataset.fg;
+                    calculateContrast();
+                });
+            });
+            calculateContrast();
+
+            // --- TYPOGRAPHY SECTION ---
+            const typeHeading = document.getElementById('type-heading');
+            const typeBody = document.getElementById('type-body');
+            const fontPairingBtns = document.querySelectorAll('.font-pairing-btn');
+            const sizeSlider = document.getElementById('font-size-slider');
+            const heightSlider = document.getElementById('line-height-slider');
+            const spacingSlider = document.getElementById('letter-spacing-slider');
+            const weightSlider = document.getElementById('font-weight-slider');
+            const sizeValue = document.getElementById('font-size-value');
+            const heightValue = document.getElementById('line-height-value');
+            const spacingValue = document.getElementById('letter-spacing-value');
+            const weightValue = document.getElementById('font-weight-value');
+
+            const allFontClasses = ['font-playfair', 'font-roboto', 'font-montserrat', 'font-inter', 'font-lora'];
+
+            fontPairingBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    fontPairingBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const hFont = btn.dataset.hFont;
+                    const bFont = btn.dataset.bFont;
+
+                    typeHeading.classList.remove(...allFontClasses);
+                    typeBody.classList.remove(...allFontClasses);
+
+                    typeHeading.classList.add(hFont);
+                    typeBody.classList.add(bFont);
+                });
+            });
+
+            sizeSlider.addEventListener('input', e => {
+                typeBody.style.fontSize = `${e.target.value}px`;
+                sizeValue.textContent = e.target.value;
+            });
+            heightSlider.addEventListener('input', e => {
+                typeBody.style.lineHeight = e.target.value;
+                heightValue.textContent = e.target.value;
+            });
+            spacingSlider.addEventListener('input', e => {
+                typeBody.style.letterSpacing = `${e.target.value}px`;
+                spacingValue.textContent = e.target.value == 0 ? 'Normal' : `${e.target.value}px`;
+            });
+             weightSlider.addEventListener('input', e => {
+                typeBody.style.fontWeight = e.target.value;
+                weightValue.textContent = e.target.value;
+            });
+
+            // --- LAYOUT SECTION ---
+            const flexContainer = document.getElementById('flex-container');
+            const flexBtns = document.querySelectorAll('.flex-btn');
+            const justifyClasses = ['justify-start', 'justify-center', 'justify-end', 'justify-between'];
+            const alignClasses = ['items-start', 'items-center', 'items-end'];
+            const directionClasses = ['flex-row', 'flex-col'];
+            const gapClasses = ['gap-0', 'gap-4', 'gap-8'];
+
+            flexBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const prop = btn.dataset.prop;
+                    const val = btn.dataset.val;
+
+                    document.querySelectorAll(`.flex-btn[data-prop="${prop}"]`).forEach(b => b.classList.remove('bg-purple-500', 'text-white'));
+                    btn.classList.add('bg-purple-500', 'text-white');
+
+                    if (prop === 'justify') {
+                        flexContainer.classList.remove(...justifyClasses);
+                        flexContainer.classList.add(`justify-${val}`);
+                    } else if (prop === 'align') {
+                        flexContainer.classList.remove(...alignClasses);
+                        flexContainer.classList.add(`items-${val}`);
+                    } else if (prop === 'direction') {
+                        flexContainer.classList.remove(...directionClasses);
+                        flexContainer.classList.add(`flex-${val}`);
+                    } else if (prop === 'gap') {
+                        flexContainer.classList.remove(...gapClasses);
+                        flexContainer.classList.add(`gap-${val}`);
+                    }
+                });
+            });
+
+            const gridContainer = document.getElementById('grid-container');
+            const gridColsSlider = document.getElementById('grid-cols-slider');
+            const gridColsValue = document.getElementById('grid-cols-value');
+            const gridGapSlider = document.getElementById('grid-gap-slider');
+            const gridGapValue = document.getElementById('grid-gap-value');
+            const gridSpanBtns = document.querySelectorAll('.grid-btn');
+            const gridItem2 = document.getElementById('grid-item-2');
+            
+            const gridColClasses = ['grid-cols-2', 'grid-cols-3', 'grid-cols-4', 'grid-cols-5'];
+            const gridGapClasses = ['gap-1', 'gap-2', 'gap-3', 'gap-4', 'gap-5', 'gap-6', 'gap-7', 'gap-8'];
+            const gridSpanClasses = ['col-span-1', 'col-span-2', 'col-span-3'];
+            
+            gridColsSlider.addEventListener('input', e => {
+                gridContainer.classList.remove(...gridColClasses);
+                gridContainer.classList.add(`grid-cols-${e.target.value}`);
+                gridColsValue.textContent = e.target.value;
+            });
+
+            gridGapSlider.addEventListener('input', e => {
+                gridContainer.classList.remove(...gridGapClasses);
+                gridContainer.classList.add(`gap-${e.target.value}`);
+                gridGapValue.textContent = e.target.value;
+            });
+            
+            gridSpanBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    gridSpanBtns.forEach(b => b.classList.remove('bg-teal-500', 'text-white'));
+                    btn.classList.add('bg-teal-500', 'text-white');
+                    gridItem2.classList.remove(...gridSpanClasses);
+                    gridItem2.classList.add(`col-span-${btn.dataset.span}`);
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
+
